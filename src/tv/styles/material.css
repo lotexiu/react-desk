@@ -1,0 +1,41 @@
+/* Material You: superfícies tonais opacas, elevação por sombra e "state layer" no foco. */
+[data-style='material'] {
+	--s-bg: var(--surface-2);
+	--s-border: none;
+	--s-shadow: 0 0.15em 0.4em rgb(0 0 0 / 0.2), 0 0.9em 2.2em -0.8em rgb(0 0 0 / 0.35);
+	--s-filter: none;
+
+	--card-bg: var(--surface-3);
+	--card-border: none;
+	--card-shadow: 0 0.1em 0.3em rgb(0 0 0 / 0.25), 0 0.5em 1.2em -0.5em rgb(0 0 0 / 0.35);
+	--card-focus-shadow: 0 0 0 0.24em var(--primary), 0 1em 2em -0.6em rgb(0 0 0 / 0.5);
+	--card-focus-transform: scale(1.045);
+
+	--chip-bg: var(--surface-3);
+	--chip-border: 1px solid var(--outline-soft);
+	--btn-bg: var(--secondary-container);
+	--btn-fg: var(--on-secondary-container);
+	--btn-border: none;
+	--btn-shadow: none;
+	--focus-color: var(--primary);
+	--nav-active-bg: var(--secondary-container);
+	--title-tracking: 0;
+}
+
+[data-style='material'] .wp-mesh {
+	opacity: 0.55;
+}
+[data-style='material'] .wp-orb {
+	display: none;
+}
+[data-style='material'] .nav-item[data-active='true'] {
+	color: var(--on-secondary-container);
+}
+[data-style='material'] .card[data-focused='true']::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	pointer-events: none;
+	background: color-mix(in srgb, var(--primary) 14%, transparent);
+}

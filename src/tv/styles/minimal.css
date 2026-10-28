@@ -1,0 +1,48 @@
+/* Minimal flat: superfícies planas, borda fina, zero sombra, foco por contorno. */
+[data-style='minimal'] {
+	--s-bg: var(--surface-1);
+	--s-border: 1px solid var(--outline-soft);
+	--s-shadow: none;
+	--s-filter: none;
+
+	--card-bg: var(--surface-2);
+	--card-border: none;
+	--card-shadow: none;
+	--card-focus-shadow: 0 0 0 0.22em var(--bg), 0 0 0 0.4em var(--on-surface);
+	--card-focus-transform: scale(1.04);
+
+	--chip-bg: var(--surface-2);
+	--chip-border: 1px solid var(--outline-soft);
+	--btn-bg: var(--surface-3);
+	--btn-fg: var(--on-surface);
+	--btn-border: 1px solid var(--outline-soft);
+	--btn-shadow: none;
+	--btn-primary-bg: var(--on-surface);
+	--btn-primary-fg: var(--bg);
+	--focus-color: var(--on-surface);
+	--nav-active-bg: var(--surface-3);
+}
+
+[data-style='minimal'] .tv-wallpaper {
+	background: var(--bg);
+}
+[data-style='minimal'] .wp-mesh,
+[data-style='minimal'] .wp-orb {
+	display: none;
+}
+[data-style='minimal'] .chip[data-on='true'],
+[data-style='minimal'] .seg button[data-on='true'] {
+	background: var(--on-surface);
+	color: var(--bg);
+}
+[data-style='minimal'] .nav-item[data-focused='true'] {
+	background: var(--on-surface);
+	color: var(--bg);
+	transform: none;
+}
+[data-style='minimal'] .search {
+	background: var(--surface-2);
+}
+[data-style='minimal'] .hero {
+	box-shadow: none;
+}

@@ -1,0 +1,77 @@
+/*
+ * Liquid Glass — vidro grosso de bisel convexo.
+ * A refração em si (mapa de deslocamento + aberração cromática) é montada em `glass/Surface.tsx`
+ * e entregue por `--glass-filter`; aqui ficam tinta, borda especular e brilho.
+ */
+[data-style='liquid-glass'] {
+	--s-bg: color-mix(in srgb, var(--surface-1) calc(var(--glass-tint) * 100%), transparent);
+	--s-border: 1px solid color-mix(in srgb, var(--on-surface) 12%, transparent);
+	--s-shadow: 0 1.6em 3.4em -1.4em rgb(0 0 0 / 0.55), inset 0 0 1.8em rgb(255 255 255 / calc(var(--glass-spec) * 0.07));
+	--s-filter: blur(calc(var(--glass-blur) * 1px)) saturate(var(--glass-sat));
+
+	--card-bg: color-mix(in srgb, var(--surface-2) 55%, transparent);
+	--card-border: 1px solid color-mix(in srgb, #fff 18%, transparent);
+	--card-shadow: 0 0.9em 1.8em -0.9em rgb(0 0 0 / 0.55);
+	--card-focus-shadow: 0 1.5em 2.8em -0.9em rgb(0 0 0 / 0.65), 0 0 0 0.16em rgb(255 255 255 / 0.9), 0 0 2.6em color-mix(in srgb, var(--primary-bright) 60%, transparent);
+	--card-focus-transform: scale(1.08);
+
+	--chip-bg: color-mix(in srgb, var(--on-surface) 10%, transparent);
+	--chip-border: 1px solid color-mix(in srgb, var(--on-surface) 16%, transparent);
+	--btn-bg: color-mix(in srgb, var(--on-surface) 14%, transparent);
+	--btn-fg: var(--on-surface);
+	--btn-border: 1px solid color-mix(in srgb, var(--on-surface) 24%, transparent);
+	--btn-shadow: inset 0 0.08em 0.12em rgb(255 255 255 / 0.4), 0 0.3em 0.8em -0.3em rgb(0 0 0 / 0.4);
+	--btn-primary-bg: color-mix(in srgb, var(--primary) 82%, transparent);
+	--focus-color: var(--on-surface);
+	--nav-active-bg: color-mix(in srgb, var(--on-surface) 14%, transparent);
+}
+
+/* borda especular: gradiente que acende nos cantos opostos, como luz atravessando a quina */
+[data-style='liquid-glass'] .surface::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	padding: 1.5px;
+	border-radius: inherit;
+	pointer-events: none;
+	opacity: var(--glass-spec);
+	background: linear-gradient(135deg, rgb(255 255 255 / 0.85), rgb(255 255 255 / 0.04) 28%, rgb(255 255 255 / 0) 58%, rgb(255 255 255 / 0.42));
+	-webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+	-webkit-mask-composite: xor;
+	mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+
+/* brilho difuso: segue o ponteiro (`--mx`/`--my`, vindos do `MouseState`) e, sem mouse, fica no canto superior esquerdo */
+[data-style='liquid-glass'] .surface::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	border-radius: inherit;
+	pointer-events: none;
+	opacity: var(--glass-spec);
+	background: radial-gradient(16em circle at var(--mx, -999px) var(--my, -999px), rgb(255 255 255 / 0.3), transparent 65%) fixed, radial-gradient(120% 70% at 18% -8%, rgb(255 255 255 / 0.2), transparent 60%);
+}
+
+/* no claro o texto é escuro: sem uma tinta mínima ele some sobre pôsteres escuros */
+[data-style='liquid-glass'][data-mode='light'] {
+	--s-bg: color-mix(in srgb, var(--surface-1) max(calc(var(--glass-tint) * 100%), 46%), transparent);
+	--s-shadow: 0 1.4em 3em -1.4em rgb(30 40 80 / 0.4), inset 0 0 1.8em rgb(255 255 255 / calc(var(--glass-spec) * 0.4));
+	--card-border: 1px solid color-mix(in srgb, #fff 60%, transparent);
+}
+
+[data-style='liquid-glass'] .nav-item[data-focused='true'] {
+	background: color-mix(in srgb, var(--primary) 85%, transparent);
+	box-shadow: 0 0 1.6em color-mix(in srgb, var(--primary-bright) 55%, transparent), inset 0 0.08em 0.12em rgb(255 255 255 / 0.4);
+}
+
+/* o cartão focado ganha uma "lente": desfoque leve do que está atrás */
+[data-style='liquid-glass'] .card[data-focused='true']::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	pointer-events: none;
+	background: linear-gradient(135deg, rgb(255 255 255 / 0.28), transparent 45%);
+}

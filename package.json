@@ -12,6 +12,8 @@
   "dependencies": {
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "@lotexiu/br": "workspace:*",
+    "@lotexiu/react": "workspace:*",
     "@lotexiu/typescript": "workspace:*"
   },
   "devDependencies": {

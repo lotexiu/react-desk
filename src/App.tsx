@@ -1,9 +1,11 @@
-import { FilterLab } from "./filter-lab";
+import { TvApp } from "./tv/TvApp";
+// import { FilterLab } from "./filter-lab";
 
 function App() {
   return (
     <>
-      <FilterLab />
+      {/* <FilterLab /> */}
+      <TvApp />
     </>
   )
 }

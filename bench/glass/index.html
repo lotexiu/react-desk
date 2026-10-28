@@ -1,0 +1,33 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>glassbench</title>
+<style>
+  html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#0a1030;font:16px system-ui;color:#fff}
+  #world{position:absolute;inset:0;overflow:hidden}
+  .mesh{position:absolute;inset:0;background:
+    radial-gradient(at 12% 18%,#2a5fd0,transparent 62%),radial-gradient(at 88% 12%,#8a3fc0,transparent 60%),
+    radial-gradient(at 78% 92%,#c04070,transparent 62%),radial-gradient(at 6% 96%,#1a3a8a,transparent 58%)}
+  .orb{position:absolute;border-radius:50%;filter:blur(6px);opacity:.8}
+  .o1{width:640px;height:640px;left:100px;top:90px;background:radial-gradient(circle at 35% 35%,#88c0ff,transparent 68%)}
+  .o2{width:520px;height:520px;right:60px;top:360px;background:radial-gradient(circle at 40% 40%,#e0a0ff,transparent 68%)}
+  .o3{width:580px;height:580px;left:700px;bottom:-140px;background:radial-gradient(circle at 50% 50%,#ff90a0,transparent 68%)}
+  body.anim .o1{animation:d1 26s ease-in-out infinite alternate}
+  body.anim .o2{animation:d1 32s ease-in-out infinite alternate-reverse}
+  body.anim .o3{animation:d1 38s ease-in-out infinite alternate}
+  @keyframes d1{from{transform:translate3d(-4%,-3%,0) scale(1)}to{transform:translate3d(6%,5%,0) scale(1.12)}}
+  #content{position:absolute;left:0;top:0;width:1920px}
+  body.anim #content{animation:scroll 8s linear infinite alternate}
+  @keyframes scroll{from{transform:translateY(0)}to{transform:translateY(-500px)}}
+  .row{display:flex;gap:20px;padding:30px 160px}
+  .card{flex:none;width:184px;height:272px;border-radius:16px;background:linear-gradient(155deg,var(--a),var(--b));font-weight:700;padding:12px;box-sizing:border-box}
+  .panel{position:absolute;box-sizing:border-box;background:rgb(20 30 70/.14);border:1px solid rgb(255 255 255/.15)}
+  .panel span{position:absolute;left:14px;top:10px;opacity:.8;font-size:14px}
+  .defs{position:absolute;width:0;height:0}
+</style>
+<body>
+<div id="world">
+  <div class="mesh"></div><i class="orb o1"></i><i class="orb o2"></i><i class="orb o3"></i>
+  <div id="content"></div>
+  <div id="panels"></div>
+</div>
+<script type="module" src="bench.js"></script>
