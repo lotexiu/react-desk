@@ -26,13 +26,16 @@ Legenda: ✅ corrigido/adicionado na lib (sem commit) · ⏳ em aberto · 🚫 d
 
 | | Faltava | Agora na lib |
 |-|---------|--------------|
-| ✅ | Papéis semânticos por modo | `ThemeStyle.resolve(mode, schemes?)` e `Theme.roles` |
+| ✅ | Papéis semânticos por modo | regras de papéis no `ThemeStyle` (`roles`) + `Theme.roles`; o app as declara em `appearance/theme/roles.ts` |
+| ✅ | Texto ilegível sobre um fundo (ex.: branco sobre cinza claro) | `on`/`min` em cada papel → `Theme.checks` (sugestão) e `Theme.enforce` (aplica); métrica `WCAG21`/`APCA` |
+| ✅ | Estilos que precisam de quantidades diferentes de paletas | o estilo declara os ids de paleta com uma padrão obrigatória (`ThemeStyle.palettes`); `Theme.setPalettes({ id: paleta })` atribui, `Theme.activePalettes` mostra o que está em uso. O app gera as 5 paletas de UMA cor com `PaletteFactory` em `appearance/theme/palettes.ts` |
+| ✅ | Gerar o tema inteiro a partir de uma ou duas cores, e poder trocar uma paleta gerada à mão | `PaletteFactory`: `seeds` (a UI lista), regras por id, `build(valores, overrides)` |
 | ✅ | Cor de texto legível sobre um fundo (`opposite()` = 100 − tom, não é contraste) | `Palette.onColor(bg)` |
 | ✅ | `Color` → string segura (`toString()` dava `oklch(...)`; todos os tons testados saíam do gamut sRGB) | `ColorUtils.toHex/toString/withAlpha/contrast/mix` |
 | ✅ | Paletas secundária/terciária/neutra a partir de uma semente | `Palette.derive(...)` / `.neutral()` |
 | ✅ | `Theme.style` não seguia uma fonte derivada | `Theme.bindStyle(source)` |
 | ✅ | Tipo `Color` só via `ReturnType<Palette['get']>` | `TColor` exportado |
-| 🚫 | Exportar para CSS variables | fica no app (`theme/css-vars.ts`): é formato de saída, não lógica |
+| 🚫 | Exportar para CSS variables | fica no app (`appearance/theme/css-vars.ts`): é formato de saída, não lógica |
 
 ## 3. Reatividade × React (+ React Compiler)
 
@@ -53,16 +56,16 @@ Legenda: ✅ corrigido/adicionado na lib (sem commit) · ⏳ em aberto · 🚫 d
 | ✅ | Timer como estado; `Time` sem "agora" | `ticker(ms)`, `Time.refresh()` |
 | ✅ | `Cache` sem `getOrSet` nem limite | `getOrSet` + `maxEntries` (LRU) |
 | ✅ | `ArrayUtils` sem `partition/range/zip` | adicionados |
-| 🚫 | Bind de DOM para `KeyboardState`/`MouseState` | adaptador (`state/keys.ts`, `state/pointer.ts` no app) |
-| 🚫 | Grid 2-D de foco com memória de coluna | específico de UI; fica no app (`state/navigation.ts`) |
+| 🚫 | Bind de DOM para `KeyboardState`/`MouseState` | adaptador (`input/keys.ts`, `input/pointer.ts` no app) |
+| 🚫 | Grid 2-D de foco com memória de coluna | específico de UI; fica no app (`navigation/navigation.ts`) |
 | ⏳ | `Mask`: falta `caretPositionAfterFormat` (já listado no CLAUDE.md) | — |
 
 ## 5. Quais recursos da lib o app usa (e por que os outros não)
 
 **Usa:** `signal`, `computed`, `Signal.batch`, `version`, `variant`, `field`, `toggle`, `selection`,
 `activeIndex`, `debouncedValue`, `sort`, `task` + `AsyncUtils.retry/sleep`, `ticker`, `ValueHistory`,
-`KeyboardState`, `MouseState`, `uiInteraction`, `Time`, `Theme` (`mode`, `style`, `roles`, `bindStyle`),
-`ThemeStyle.resolve`, `PALETTES`/`TonalPalette` (`derive`, `neutral`, `onColor`), `ColorUtils`, `Mask`,
+`KeyboardState`, `MouseState`, `uiInteraction`, `Time`, `Theme` (`mode`, `style`, `palettes`, `activePalettes`, `roles`, `components`, `bindStyle`, `bindPalettes`),
+`ThemeStyle`, `PALETTES`/`TonalPalette` (`derive`, `neutral`), `ColorUtils`, `Mask`,
 `Cache`, `StopWatch.measure`, `StringUtils`, `MathUtils`, `ArrayUtils`, `ChunkUtils`, `DateUtils`,
 `FunctionUtils` (`debounce`, `throttle`), `BitwiseUtils`.
 

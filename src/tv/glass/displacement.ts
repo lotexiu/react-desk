@@ -1,12 +1,14 @@
 import { Cache, StopWatch } from '@lotexiu/typescript'
 
 /**
- * Mapa de deslocamento para `feDisplacementMap`: R e G dizem, para cada ponto, para onde o fundo deve ser
- * "puxado" (128 = parado). Perto da borda o vetor aponta para dentro com força máxima e cai a zero no
- * miolo — a cara de lente convexa (bisel de vidro).
+ * Mapa de deslocamento para `feDisplacementMap`: R e G dizem, para cada ponto, para onde o fundo
+ * deve ser "puxado" (128 = parado). Perto da borda o vetor aponta para dentro com força máxima e
+ * cai a zero no miolo — a cara de lente convexa (bisel de vidro).
  *
- * É um SVG vetorial (4 faixas de gradiente nas bordas, combinadas por `mix-blend-mode`), não pixels:
- * montar a string custa microssegundos, não há laço por pixel nem canvas, e o navegador rasteriza uma vez.
+ * É um SVG vetorial (4 faixas de gradiente nas bordas, combinadas por `mix-blend-mode`), não
+ * pixels:
+ * montar a string custa microssegundos, não há laço por pixel nem canvas, e o navegador rasteriza
+ * uma vez.
  *  - faixa esquerda/topo: `screen` com vermelho/verde crescente     → o canal sobe de 128 até 255
  *  - faixa direita/base:  `multiply` com vermelho/verde decrescente → o canal desce de 128 até 0
  * No banco de testes (LIB-FINDINGS.md, seção "vidro") a imagem é equivalente à do mapa em canvas.
@@ -28,39 +30,80 @@ type TStrip = Readonly<{
 	/** `screen` sobe o canal acima de 128; `multiply` o desce abaixo */
 	blend: 'screen' | 'multiply'
 	/** retângulo da faixa, dados o tamanho do painel e o bisel */
-	rect: (w: number, h: number, bezel: number) => readonly [x: number, y: number, width: number, height: number]
+	rect: (
+		width: number,
+		height: number,
+		bezel: number
+	) => readonly [x: number, y: number, width: number, height: number]
 }>
 
 const STRIPS: readonly TStrip[] = [
-	{ from: [0, 0], to: [1, 0], channel: 'r', blend: 'screen', rect: (_w, h, b) => [0, 0, b, h] },
-	{ from: [1, 0], to: [0, 0], channel: 'r', blend: 'multiply', rect: (w, h, b) => [w - b, 0, b, h] },
-	{ from: [0, 0], to: [0, 1], channel: 'g', blend: 'screen', rect: (w, _h, b) => [0, 0, w, b] },
-	{ from: [0, 1], to: [0, 0], channel: 'g', blend: 'multiply', rect: (w, h, b) => [0, h - b, w, b] },
+	{
+		from: [0, 0],
+		to: [1, 0],
+		channel: 'r',
+		blend: 'screen',
+		rect: (_width, height, bezel) => [0, 0, bezel, height],
+	},
+	{
+		from: [1, 0],
+		to: [0, 0],
+		channel: 'r',
+		blend: 'multiply',
+		rect: (width, height, bezel) => [width - bezel, 0, bezel, height],
+	},
+	{
+		from: [0, 0],
+		to: [0, 1],
+		channel: 'g',
+		blend: 'screen',
+		rect: (width, _height, bezel) => [0, 0, width, bezel],
+	},
+	{
+		from: [0, 1],
+		to: [0, 0],
+		channel: 'g',
+		blend: 'multiply',
+		rect: (width, height, bezel) => [0, height - bezel, width, bezel],
+	},
 ]
 
-const falloff = (t: number) => (1 - t) ** FALLOFF_POWER
+const falloff = (progress: number) => (1 - progress) ** FALLOFF_POWER
 
 /** `screen` soma ao canal (preto = neutro); `multiply` o reduz (branco = neutro). */
 function stripColor({ channel, blend }: TStrip, strength: number): string {
-	const level = Math.round(blend === 'screen' ? strength * CHANNEL_MAX : CHANNEL_MAX - strength * CHANNEL_MAX)
+	const level = Math.round(
+		blend === 'screen' ? strength * CHANNEL_MAX : CHANNEL_MAX - strength * CHANNEL_MAX
+	)
 	const rest = blend === 'screen' ? 0 : CHANNEL_MAX
 	return channel === 'r' ? `rgb(${level},${rest},${rest})` : `rgb(${rest},${level},${rest})`
 }
 
 function gradientOf(strip: TStrip, id: string): string {
-	const stops = RAMP_STOPS.map((t) => `<stop offset="${t}" stop-color="${stripColor(strip, falloff(t))}"/>`).join('')
+	const stops = RAMP_STOPS.map(
+		(rampStop) =>
+			`<stop offset="${rampStop}" stop-color="${stripColor(strip, falloff(rampStop))}"/>`
+	).join('')
 	return `<linearGradient id="${id}" x1="${strip.from[0]}" y1="${strip.from[1]}" x2="${strip.to[0]}" y2="${strip.to[1]}">${stops}</linearGradient>`
 }
 
-function rectOf(strip: TStrip, id: string, w: number, h: number, bezel: number): string {
-	const [x, y, width, height] = strip.rect(w, h, bezel)
+function rectOf(
+	strip: TStrip,
+	id: string,
+	boxWidth: number,
+	boxHeight: number,
+	bezel: number
+): string {
+	const [x, y, width, height] = strip.rect(boxWidth, boxHeight, bezel)
 	return `<rect x="${x}" y="${y}" width="${width}" height="${height}" fill="url(#${id})" style="mix-blend-mode:${strip.blend}"/>`
 }
 
 function buildMap(width: number, height: number, bezel: number): string {
 	const ids = STRIPS.map((_, index) => `s${index}`)
-	const gradients = STRIPS.map((strip, i) => gradientOf(strip, ids[i])).join('')
-	const rects = STRIPS.map((strip, i) => rectOf(strip, ids[i], width, height, bezel)).join('')
+	const gradients = STRIPS.map((strip, index) => gradientOf(strip, ids[index])).join('')
+	const rects = STRIPS.map((strip, index) => rectOf(strip, ids[index], width, height, bezel)).join(
+		''
+	)
 	const base = `<rect width="${width}" height="${height}" fill="rgb(${NEUTRAL},${NEUTRAL},${NEUTRAL})"/>`
 	const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><defs>${gradients}</defs>${base}${rects}</svg>`
 	return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`
@@ -73,7 +116,9 @@ const mapTimer = new StopWatch()
 
 function displacementMap(width: number, height: number, requestedBezel: number): string {
 	const bezel = Math.round(Math.min(requestedBezel, Math.min(width, height) * MAX_BEZEL_RATIO))
-	return cache.getOrSet(`${width}x${height}b${bezel}`, () => mapTimer.measure(() => buildMap(width, height, bezel)))
+	return cache.getOrSet(`${width}x${height}b${bezel}`, () =>
+		mapTimer.measure(() => buildMap(width, height, bezel))
+	)
 }
 
 /** Só Chromium aceita `url(#filtro)` em `backdrop-filter`; nos outros cai no desfoque simples. */

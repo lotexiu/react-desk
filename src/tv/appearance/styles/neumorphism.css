@@ -1,0 +1,80 @@
+/*
+ * Neumorphism: tudo é da mesma cor do fundo; o volume vem só de duas sombras (clara em
+ * cima/esquerda, escura embaixo/direita). Foco = afundar.
+ */
+[data-style='neumorphism'] {
+	--s-bg: var(--surface-2);
+	--s-border: none;
+	--s-shadow: 0.7em 0.7em 1.6em var(--neu-lo), -0.7em -0.7em 1.6em var(--neu-hi);
+	--s-filter: none;
+
+	--card-bg: var(--surface-2);
+	--card-border: none;
+	--card-shadow: 0.5em 0.5em 1.1em var(--neu-lo), -0.5em -0.5em 1.1em var(--neu-hi);
+	--card-focus-shadow:
+		inset 0.35em 0.35em 0.8em var(--neu-lo), inset -0.35em -0.35em 0.8em var(--neu-hi),
+		0 0 0 0.16em color-mix(in srgb, var(--primary) 75%, transparent);
+	--card-focus-transform: scale(0.975);
+
+	--chip-bg: var(--surface-2);
+	--chip-border: none;
+	--btn-bg: var(--surface-2);
+	--btn-fg: var(--on-surface);
+	--btn-border: none;
+	--btn-shadow: 0.3em 0.3em 0.7em var(--neu-lo), -0.3em -0.3em 0.7em var(--neu-hi);
+	--btn-primary-bg: var(--primary);
+	--focus-color: var(--primary);
+	--nav-active-bg: var(--surface-2);
+	--r-btn: 1.2em;
+}
+
+[data-style='neumorphism'] .tv-wallpaper {
+	background: var(--surface-2);
+}
+[data-style='neumorphism'] .wp-mesh,
+[data-style='neumorphism'] .wp-orb {
+	display: none;
+}
+[data-style='neumorphism'] .chip,
+[data-style='neumorphism'] .btn:not(.btn--primary),
+[data-style='neumorphism'] .switch,
+[data-style='neumorphism'] .style-option,
+[data-style='neumorphism'] .seg {
+	box-shadow:
+		0.3em 0.3em 0.7em var(--neu-lo),
+		-0.3em -0.3em 0.7em var(--neu-hi);
+	background: var(--surface-2);
+}
+[data-style='neumorphism'] .chip[data-on='true'],
+[data-style='neumorphism'] .style-option[data-on='true'],
+[data-style='neumorphism'] .switch[data-on='true'] {
+	box-shadow:
+		inset 0.3em 0.3em 0.7em var(--neu-lo),
+		inset -0.3em -0.3em 0.7em var(--neu-hi);
+	color: var(--primary);
+	background: var(--surface-2);
+}
+[data-style='neumorphism'] .nav-item[data-active='true'] {
+	box-shadow:
+		inset 0.25em 0.25em 0.6em var(--neu-lo),
+		inset -0.25em -0.25em 0.6em var(--neu-hi);
+	color: var(--primary);
+}
+[data-style='neumorphism'] .nav-item[data-focused='true'] {
+	background: var(--surface-2);
+	color: var(--primary);
+	box-shadow:
+		inset 0.25em 0.25em 0.6em var(--neu-lo),
+		inset -0.25em -0.25em 0.6em var(--neu-hi),
+		0 0 0 0.16em color-mix(in srgb, var(--primary) 70%, transparent);
+	transform: none;
+}
+[data-style='neumorphism'] .search {
+	background: var(--surface-2);
+	box-shadow:
+		inset 0.25em 0.25em 0.6em var(--neu-lo),
+		inset -0.25em -0.25em 0.6em var(--neu-hi);
+}
+[data-style='neumorphism'] .hero__info {
+	background: var(--surface-2);
+}

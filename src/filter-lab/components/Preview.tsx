@@ -9,14 +9,14 @@ type TProps = { doc: TFilterDoc; source: TPreviewSource; background?: TBackgroun
 
 /** Renderiza o filtro sobre uma amostra. Usa o mesmo markup do export, com id próprio para não colidir com outros previews. */
 function Preview({ doc, source, background = 'vivid' }: TProps) {
-  const uid = useId()
+  const uniqueId = useId()
   return (
     <div className={`fl-stage fl-bg-${background}`}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 600 360"
         preserveAspectRatio="xMidYMid slice"
-        dangerouslySetInnerHTML={{ __html: buildPreviewSvg(doc, source, uid) }}
+        dangerouslySetInnerHTML={{ __html: buildPreviewSvg(doc, source, uniqueId) }}
       />
     </div>
   )

@@ -43,23 +43,23 @@ function Demo({ title, caption, source, make, onOpenInLab }: TDemoProps) {
   )
 }
 
-const kindLabel = (f: TField) => {
-  switch (f.kind) {
-    case 'number': return f.min !== undefined && f.max !== undefined ? `número (${f.min}–${f.max})` : 'número'
-    case 'select': return f.options.join(' | ')
+const kindLabel = (field: TField) => {
+  switch (field.kind) {
+    case 'number': return field.min !== undefined && field.max !== undefined ? `número (${field.min}–${field.max})` : 'número'
+    case 'select': return field.options.join(' | ')
     case 'color': return 'cor'
     case 'input': return 'referência (in)'
     default: return 'texto'
   }
 }
 
-const defaultLabel = (f: TField) => (f.kind === 'input' && f.default === '' ? 'resultado anterior' : String(f.default))
+const defaultLabel = (field: TField) => (field.kind === 'input' && field.default === '' ? 'resultado anterior' : String(field.default))
 
 function Reference({ tag, onOpenInLab }: { tag: string; onOpenInLab: TProps['onOpenInLab'] }) {
   const def = getPrimitive(tag)
   const docs = REFERENCE[tag]
   // componentTransfer repete os mesmos campos para R/G/B/A: documenta só um canal.
-  const fields = def.fields.filter((f) => !f.group?.startsWith('Canal ') || f.group === 'Canal R')
+  const fields = def.fields.filter((field) => !field.group?.startsWith('Canal ') || field.group === 'Canal R')
   const syntax = toNodeMarkup({ id: 'example', tag, enabled: true, params: defaultParams(def) }, 'svg')
 
   return (
@@ -68,7 +68,7 @@ function Reference({ tag, onOpenInLab }: { tag: string; onOpenInLab: TProps['onO
       <p className="fl-lead">{docs.summary}</p>
 
       <h3>Como funciona</h3>
-      {docs.how.map((p, i) => <p key={i}>{p}</p>)}
+      {docs.how.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
 
       <h3>Sintaxe</h3>
       <CodeBlock code={syntax} label="SVG (valores padrão do Laboratório)" />
@@ -78,13 +78,13 @@ function Reference({ tag, onOpenInLab }: { tag: string; onOpenInLab: TProps['onO
         <table className="fl-table">
           <thead><tr><th>Campo</th><th>Valores</th><th>Padrão</th><th>O que faz</th></tr></thead>
           <tbody>
-            {fields.map((f) => {
-              const key = f.key.replace(/^R_/, '')
+            {fields.map((field) => {
+              const key = field.key.replace(/^R_/, '')
               return (
-                <tr key={f.key}>
+                <tr key={field.key}>
                   <td><code>{key}</code></td>
-                  <td>{kindLabel(f)}</td>
-                  <td>{defaultLabel(f)}</td>
+                  <td>{kindLabel(field)}</td>
+                  <td>{defaultLabel(field)}</td>
                   <td>{docs.help[key] ?? '—'}</td>
                 </tr>
               )
@@ -94,14 +94,14 @@ function Reference({ tag, onOpenInLab }: { tag: string; onOpenInLab: TProps['onO
       </div>
 
       <h3>Exemplos</h3>
-      {docs.examples.map((ex: TExample) => (
-        <Demo key={ex.title} title={ex.title} caption={ex.text} source={ex.source} make={ex.make} onOpenInLab={onOpenInLab} />
+      {docs.examples.map((example: TExample) => (
+        <Demo key={example.title} title={example.title} caption={example.text} source={example.source} make={example.make} onOpenInLab={onOpenInLab} />
       ))}
 
       {docs.tips.length > 0 && (
         <>
           <h3>Dicas e armadilhas</h3>
-          <ul>{docs.tips.map((t, i) => <li key={i}>{t}</li>)}</ul>
+          <ul>{docs.tips.map((tip, index) => <li key={index}>{tip}</li>)}</ul>
         </>
       )}
 
@@ -114,15 +114,15 @@ function Reference({ tag, onOpenInLab }: { tag: string; onOpenInLab: TProps['onO
 }
 
 function Guide({ slug, onOpenInLab }: { slug: string; onOpenInLab: TProps['onOpenInLab'] }) {
-  const guide = GUIDES.find((g) => g.slug === slug) ?? GUIDES[0]
+  const guide = GUIDES.find((candidate) => candidate.slug === slug) ?? GUIDES[0]
   return (
     <article className="fl-article">
       <h2>{guide.title}</h2>
-      {guide.blocks.map((b, i) => {
-        if (b.type === 'p') return <p key={i}>{b.text}</p>
-        if (b.type === 'code') return <CodeBlock key={i} code={b.code} />
-        if (b.type === 'note') return <aside key={i} className="fl-note">{b.text}</aside>
-        return <Demo key={i} caption={b.caption} source={b.source} make={b.make} onOpenInLab={onOpenInLab} />
+      {guide.blocks.map((block, index) => {
+        if (block.type === 'p') return <p key={index}>{block.text}</p>
+        if (block.type === 'code') return <CodeBlock key={index} code={block.code} />
+        if (block.type === 'note') return <aside key={index} className="fl-note">{block.text}</aside>
+        return <Demo key={index} caption={block.caption} source={block.source} make={block.make} onOpenInLab={onOpenInLab} />
       })}
     </article>
   )
@@ -133,15 +133,15 @@ function Learn({ topic, setTopic, onOpenInLab }: TProps) {
     <div className="fl-learn">
       <nav className="fl-nav" aria-label="Tópicos">
         <h3>Guias</h3>
-        {GUIDES.map((g) => (
-          <button key={g.slug} type="button" aria-current={topic.kind === 'guide' && topic.key === g.slug} onClick={() => setTopic({ kind: 'guide', key: g.slug })}>
-            {g.title}
+        {GUIDES.map((guideEntry) => (
+          <button key={guideEntry.slug} type="button" aria-current={topic.kind === 'guide' && topic.key === guideEntry.slug} onClick={() => setTopic({ kind: 'guide', key: guideEntry.slug })}>
+            {guideEntry.title}
           </button>
         ))}
         <h3>Primitivas</h3>
-        {PRIMITIVES.map((p) => (
-          <button key={p.tag} type="button" aria-current={topic.kind === 'ref' && topic.key === p.tag} onClick={() => setTopic({ kind: 'ref', key: p.tag })}>
-            {p.tag}
+        {PRIMITIVES.map((primitive) => (
+          <button key={primitive.tag} type="button" aria-current={topic.kind === 'ref' && topic.key === primitive.tag} onClick={() => setTopic({ kind: 'ref', key: primitive.tag })}>
+            {primitive.tag}
           </button>
         ))}
       </nav>

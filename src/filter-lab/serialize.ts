@@ -8,12 +8,12 @@ const MAX_LINE = 90
 
 const sanitizeId = (id: string) => id.replace(/[^A-Za-z0-9_-]/g, '-') || 'filter'
 
-const escapeAttr = (v: TParamValue) => String(v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
+const escapeAttr = (value: TParamValue) => String(value).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
 
-const kebabToCamel = (name: string) => name.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase())
+const kebabToCamel = (name: string) => name.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase())
 
 const pascal = (id: string) => {
-  const name = id.split(/[^A-Za-z0-9]+/).filter(Boolean).map((s) => s[0].toUpperCase() + s.slice(1)).join('')
+  const name = id.split(/[^A-Za-z0-9]+/).filter(Boolean).map((word) => word[0].toUpperCase() + word.slice(1)).join('')
   return /^[A-Za-z]/.test(name) ? name : `Filter${name}`
 }
 
@@ -23,9 +23,9 @@ function resultNames(nodes: TFilterNode[]): Map<string, string> {
   const names = new Map<string, string>()
   for (const node of nodes) {
     const base = node.tag.replace(/^fe/, '').toLowerCase()
-    const n = (counts.get(base) ?? 0) + 1
-    counts.set(base, n)
-    names.set(node.id, n === 1 ? base : `${base}${n}`)
+    const count = (counts.get(base) ?? 0) + 1
+    counts.set(base, count)
+    names.set(node.id, count === 1 ? base : `${base}${count}`)
   }
   return names
 }
@@ -33,12 +33,12 @@ function resultNames(nodes: TFilterNode[]): Map<string, string> {
 /** Monta a árvore do `<filter>`. Nós desligados são ignorados e referências inválidas caem no "resultado anterior". */
 function buildFilterElement(doc: TFilterDoc, idOverride?: string): TSvgElement {
   const { settings } = doc
-  const nodes = doc.nodes.filter((n) => n.enabled)
+  const nodes = doc.nodes.filter((node) => node.enabled)
   const names = resultNames(nodes)
   const referenced = new Set<string>()
 
   const children = nodes.map((node, index) => {
-    const earlier = new Set(nodes.slice(0, index).map((n) => n.id))
+    const earlier = new Set(nodes.slice(0, index).map((node) => node.id))
     const resolve = (ref: TParamValue): string | undefined => {
       const value = String(ref ?? '')
       if (value === 'SourceGraphic' || value === 'SourceAlpha') return value
@@ -75,22 +75,22 @@ function formatAttr(name: string, value: TParamValue, mode: TMode): string {
 
 /** Renderiza o elemento como linhas indentadas com 2 espaços. */
 function renderElement(element: TSvgElement, mode: TMode): string[] {
-  const attrs = Object.entries(element.attrs).map(([k, v]) => formatAttr(k, v, mode))
+  const attrs = Object.entries(element.attrs).map(([key, value]) => formatAttr(key, value, mode))
   const oneLine = `<${element.tag}${attrs.length ? ' ' : ''}${attrs.join(' ')}`
   const wrap = oneLine.length > MAX_LINE
   const selfClose = !element.children?.length
 
-  const open = wrap ? [`<${element.tag}`, ...attrs.map((a) => `  ${a}`)] : [oneLine]
+  const open = wrap ? [`<${element.tag}`, ...attrs.map((attribute) => `  ${attribute}`)] : [oneLine]
   if (selfClose) {
     if (wrap) return [...open, '/>']
     return [`${oneLine} />`]
   }
   const head = wrap ? [...open, '>'] : [`${oneLine}>`]
-  const body = element.children!.flatMap((c) => renderElement(c, mode).map((l) => `  ${l}`))
+  const body = element.children!.flatMap((child) => renderElement(child, mode).map((line) => `  ${line}`))
   return [...head, ...body, `</${element.tag}>`]
 }
 
-const indent = (lines: string[], depth: number) => lines.map((l) => `${'  '.repeat(depth)}${l}`)
+const indent = (lines: string[], depth: number) => lines.map((line) => `${'  '.repeat(depth)}${line}`)
 
 /** Só o `<filter>…</filter>`, em SVG puro ou JSX. */
 function toFilterMarkup(doc: TFilterDoc, mode: TMode): string {
@@ -117,7 +117,7 @@ function toComponent(doc: TFilterDoc): string {
     `    <svg`,
     `      xmlns="http://www.w3.org/2000/svg"`,
     `      style={{`,
-    ...style.map((s) => `        ${s},`),
+    ...style.map((declaration) => `        ${declaration},`),
     `      }}`,
     `    >`,
     ...indent(renderElement(buildFilterElement(doc), 'jsx'), 3),
@@ -142,9 +142,9 @@ type TFlowStep = { tag: string; result?: string; inputs: string[] }
 /** Descreve o que cada etapa recebe — alimenta o painel "Como o navegador executa". */
 function describeFlow(doc: TFilterDoc): TFlowStep[] {
   const steps = buildFilterElement(doc).children ?? []
-  return steps.map((step, i) => {
-    const previous = i === 0 ? 'SourceGraphic' : `etapa ${i} (${steps[i - 1].tag})`
-    const ref = (v: TParamValue | undefined) => (v === undefined ? previous : String(v))
+  return steps.map((step, index) => {
+    const previous = index === 0 ? 'SourceGraphic' : `etapa ${index} (${steps[index - 1].tag})`
+    const ref = (value: TParamValue | undefined) => (value === undefined ? previous : String(value))
     const inputs: string[] = []
     if (!['feTurbulence', 'feFlood', 'feImage'].includes(step.tag)) inputs.push(ref(step.attrs.in))
     if ('in2' in step.attrs) inputs.push(ref(step.attrs.in2))
@@ -157,8 +157,8 @@ const toJson = (doc: TFilterDoc) => JSON.stringify(doc, null, 2)
 /** A arte passa 100px da área visível para o `feDisplacementMap` ter o que amostrar perto das bordas. */
 const BACKGROUND_ART = `
     <rect x="-100" y="-100" width="800" height="560" fill="#14204f"/>
-    ${Array.from({ length: 16 }, (_, i) => `<rect x="${(i - 2) * 50}" y="-100" width="25" height="560" fill="${i % 2 ? '#ff5d8f' : '#ffd166'}" opacity="0.9"/>`).join('')}
-    ${Array.from({ length: 18 }, (_, i) => `<rect x="-100" y="${(i - 3) * 30}" width="800" height="3" fill="#fff" opacity="0.7"/>`).join('')}
+    ${Array.from({ length: 16 }, (_, index) => `<rect x="${(index - 2) * 50}" y="-100" width="25" height="560" fill="${index % 2 ? '#ff5d8f' : '#ffd166'}" opacity="0.9"/>`).join('')}
+    ${Array.from({ length: 18 }, (_, index) => `<rect x="-100" y="${(index - 3) * 30}" width="800" height="3" fill="#fff" opacity="0.7"/>`).join('')}
     <text x="300" y="215" text-anchor="middle" font-size="110" font-weight="800" font-family="sans-serif" fill="#fff">GLASS</text>`
 
 const SOURCES: Record<TPreviewSource, string> = {
@@ -191,10 +191,10 @@ function parseDoc(json: string, makeId: () => string): TFilterDoc {
     throw new Error('JSON inválido: esperado { settings, layer, nodes }')
   }
   const nodes: TFilterNode[] = []
-  for (const n of raw.nodes) {
+  for (const node of raw.nodes) {
     try {
-      const def = getPrimitive(n.tag)
-      nodes.push({ id: typeof n.id === 'string' ? n.id : makeId(), tag: def.tag, enabled: n.enabled !== false, params: { ...defaultParams(def), ...n.params } })
+      const def = getPrimitive(node.tag)
+      nodes.push({ id: typeof node.id === 'string' ? node.id : makeId(), tag: def.tag, enabled: node.enabled !== false, params: { ...defaultParams(def), ...node.params } })
     } catch {
       // primitiva desconhecida: ignora
     }

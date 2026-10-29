@@ -1,7 +1,8 @@
 /*
- * Base do layout de TV. Tudo em `em`: o root escala com o viewport (1920×1080 → 16px),
- * como numa tela de TV. As cores vêm de variáveis inline (`theme/roles.ts`); a aparência
- * de cada estilo vem de tokens `--s-*`, `--card-*`, `--btn-*`... definidos em `styles/<estilo>.css`.
+ * Base do layout de TV. Tudo em `em`: o root escala com o viewport (1920×1080 → 16px), como numa
+ * tela de TV. As cores vêm de variáveis inline (`appearance/theme/roles.ts`); a aparência de cada
+ * estilo vem de tokens `--s-*`, `--card-*`, `--btn-*`... definidos em
+ * `appearance/styles/<estilo>.css`.
  */
 
 .tv-root {
@@ -264,7 +265,13 @@
 	width: 2.8em;
 	height: 2.8em;
 	border-radius: 50%;
-	background: conic-gradient(from 210deg, var(--primary-bright), var(--secondary-bright), var(--tertiary), var(--primary-bright));
+	background: conic-gradient(
+		from 210deg,
+		var(--primary-bright),
+		var(--secondary-bright),
+		var(--tertiary),
+		var(--primary-bright)
+	);
 	color: #fff;
 	font-weight: 900;
 	font-size: 1.1em;
@@ -285,7 +292,10 @@
 	font-weight: 600;
 	text-align: center;
 	cursor: pointer;
-	transition: background 0.2s, color 0.2s, transform 0.2s;
+	transition:
+		background 0.2s,
+		color 0.2s,
+		transform 0.2s;
 }
 .nav-item .icon {
 	font-size: 1.28em;
@@ -371,7 +381,9 @@
 	font: inherit;
 	font-size: 0.8em;
 	font-weight: 700;
-	transition: background 0.08s, transform 0.08s;
+	transition:
+		background 0.08s,
+		transform 0.08s;
 }
 .remote kbd[data-down='true'] {
 	background: var(--primary);
@@ -481,7 +493,12 @@
 }
 .skeleton__hero,
 .skeleton__row i {
-	background: linear-gradient(100deg, color-mix(in srgb, var(--on-surface) 8%, transparent) 30%, color-mix(in srgb, var(--on-surface) 18%, transparent) 50%, color-mix(in srgb, var(--on-surface) 8%, transparent) 70%);
+	background: linear-gradient(
+		100deg,
+		color-mix(in srgb, var(--on-surface) 8%, transparent) 30%,
+		color-mix(in srgb, var(--on-surface) 18%, transparent) 50%,
+		color-mix(in srgb, var(--on-surface) 8%, transparent) 70%
+	);
 	background-size: 250% 100%;
 	animation: shimmer 1.4s linear infinite;
 }
@@ -610,7 +627,9 @@
 	border-radius: 99em;
 	background: rgb(255 255 255 / 0.4);
 	cursor: pointer;
-	transition: width 0.3s, background 0.3s;
+	transition:
+		width 0.3s,
+		background 0.3s;
 }
 .dot[data-on='true'] {
 	width: 2.4em;
@@ -640,7 +659,11 @@
 	content: '';
 	position: absolute;
 	inset: 0;
-	background: repeating-linear-gradient(115deg, rgb(255 255 255 / 0.05) 0 0.12em, transparent 0.12em 1.2em);
+	background: repeating-linear-gradient(
+		115deg,
+		rgb(255 255 255 / 0.05) 0 0.12em,
+		transparent 0.12em 1.2em
+	);
 }
 .art--v1::before {
 	left: 30%;
@@ -667,7 +690,10 @@
 	cursor: pointer;
 	text-align: left;
 	color: #fff;
-	transition: transform 0.28s cubic-bezier(0.2, 0.9, 0.2, 1.1), box-shadow 0.28s, border-color 0.28s;
+	transition:
+		transform 0.28s cubic-bezier(0.2, 0.9, 0.2, 1.1),
+		box-shadow 0.28s,
+		border-color 0.28s;
 }
 .card[data-focused='true'] {
 	z-index: 3;
@@ -793,7 +819,10 @@
 	color: var(--on-surface);
 	font-weight: 600;
 	cursor: pointer;
-	transition: background 0.2s, color 0.2s, transform 0.2s;
+	transition:
+		background 0.2s,
+		color 0.2s,
+		transform 0.2s;
 }
 .chip[data-on='true'] {
 	background: var(--primary);
@@ -818,7 +847,11 @@
 	box-shadow: var(--btn-shadow);
 	font-weight: 700;
 	cursor: pointer;
-	transition: transform 0.2s, background 0.2s, box-shadow 0.2s, opacity 0.2s;
+	transition:
+		transform 0.2s,
+		background 0.2s,
+		box-shadow 0.2s,
+		opacity 0.2s;
 }
 .btn--primary {
 	background: var(--btn-primary-bg, var(--primary));
@@ -974,7 +1007,9 @@
 	background: color-mix(in srgb, var(--on-surface) 7%, transparent);
 	text-align: left;
 	cursor: pointer;
-	transition: transform 0.2s, border-color 0.2s;
+	transition:
+		transform 0.2s,
+		border-color 0.2s;
 }
 .style-option[data-on='true'] {
 	border-color: var(--primary);
@@ -1101,7 +1136,11 @@
 	height: 0.5em;
 	border-radius: 99em;
 	outline: 0;
-	background: linear-gradient(to right, var(--primary) var(--fill), color-mix(in srgb, var(--on-surface) 18%, transparent) var(--fill));
+	background: linear-gradient(
+		to right,
+		var(--primary) var(--fill),
+		color-mix(in srgb, var(--on-surface) 18%, transparent) var(--fill)
+	);
 }
 .slider input[type='range']::-webkit-slider-thumb {
 	-webkit-appearance: none;

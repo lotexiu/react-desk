@@ -1,24 +1,27 @@
 import { useEffect, useRef } from 'react'
 import type { RefObject } from 'react'
 import Grain from '../components/Grain'
-import { NowPlaying, RemoteHud, Sidebar, Toast, TopBar } from './components/Chrome'
-import { Overlays } from './components/Overlays'
-import { Row } from './components/Row'
-import { appearance } from './state/appearance'
-import { onBlur, onKeyDown, onKeyUp } from './state/keys'
-import { heroIndex, retryCatalog, rows, zone } from './state/navigation'
-import { bindPointer } from './state/pointer'
+import { NowPlaying, RemoteHud, Sidebar, Toast, TopBar } from './layout/Chrome'
+import { Overlays } from './layout/Overlays'
+import { Row } from './catalog/Row'
+import { appearance } from './appearance/appearance'
+import { onBlur, onKeyDown, onKeyUp } from './input/keys'
+import { heroIndex, retryCatalog, rows, zone } from './navigation/navigation'
+import { bindPointer } from './input/pointer'
 import { useReactive } from '@lotexiu/react'
-import { catalog, nightLight, normalizedQuery, startClock, startPlayback } from './state/system'
-import { Icon } from './components/Icon'
+import { catalog, normalizedQuery } from './catalog/catalog'
+import { nightLight } from './system/settings'
+import { startClock } from './system/clock'
+import { startPlayback } from './playback/playback'
+import { Icon } from './ui/Icon'
 import './styles/base.css'
-import './styles/liquid-glass.css'
-import './styles/acrylic.css'
-import './styles/material.css'
-import './styles/neumorphism.css'
-import './styles/brutalist.css'
-import './styles/neon.css'
-import './styles/minimal.css'
+import './appearance/styles/liquid-glass.css'
+import './appearance/styles/acrylic.css'
+import './appearance/styles/material.css'
+import './appearance/styles/neumorphism.css'
+import './appearance/styles/brutalist.css'
+import './appearance/styles/neon.css'
+import './appearance/styles/minimal.css'
 
 const HERO_ROTATE_MS = 9000
 
@@ -40,10 +43,10 @@ function Skeleton() {
 	return (
 		<div className="skeleton" aria-busy>
 			<div className="skeleton__hero" />
-			{Array.from({ length: SKELETON_ROWS }, (_, i) => (
-				<div key={i} className="skeleton__row">
-					{Array.from({ length: 6 }, (_, j) => (
-						<i key={j} />
+			{Array.from({ length: SKELETON_ROWS }, (_, rowIndex) => (
+				<div key={rowIndex} className="skeleton__row">
+					{Array.from({ length: 6 }, (_, cardIndex) => (
+						<i key={cardIndex} />
 					))}
 				</div>
 			))}
@@ -65,21 +68,25 @@ function CatalogError({ message }: { message: string }) {
 
 function Content() {
 	const list = useReactive(rows)
-	const q = useReactive(normalizedQuery)
+	const query = useReactive(normalizedQuery)
 	const data = useReactive(catalog.data)
 	const loading = useReactive(catalog.loading)
 	const error = useReactive(catalog.error)
 	const empty = list.length === 0
 	return (
 		<main className="tv-content">
-			{list.map((row, i) => (
-				<Row key={row.id} row={row} index={i} />
+			{list.map((row, rowIndex) => (
+				<Row key={row.id} row={row} index={rowIndex} />
 			))}
 			{empty && data === undefined && error === undefined && <Skeleton />}
-			{empty && error !== undefined && data === undefined && <CatalogError message={error.message} />}
-			{empty && data !== undefined && <p className="empty">Nada encontrado para “{q}”.</p>}
+			{empty && error !== undefined && data === undefined && (
+				<CatalogError message={error.message} />
+			)}
+			{empty && data !== undefined && <p className="empty">Nada encontrado para “{query}”.</p>}
 			{loading && data !== undefined && <span className="refreshing">Atualizando catálogo…</span>}
-			{error !== undefined && data !== undefined && <span className="refreshing refreshing--error">Falha ao atualizar: {error.message}</span>}
+			{error !== undefined && data !== undefined && (
+				<span className="refreshing refreshing--error">Falha ao atualizar: {error.message}</span>
+			)}
 		</main>
 	)
 }
@@ -119,7 +126,14 @@ function TvApp() {
 
 	return (
 		<div className="tv-root" style={vars}>
-			<div ref={stage} className="tv-stage" data-style={style.id} data-mode={mode} data-zone={inNav ? 'nav' : 'content'} data-ambient={ambient ? 'on' : 'off'}>
+			<div
+				ref={stage}
+				className="tv-stage"
+				data-style={style.id}
+				data-mode={mode}
+				data-zone={inNav ? 'nav' : 'content'}
+				data-ambient={ambient ? 'on' : 'off'}
+			>
 				<Wallpaper />
 				{(style.glassy || style.id === 'neon') && <Grain />}
 				<Content />

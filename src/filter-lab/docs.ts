@@ -22,7 +22,7 @@ type TBlock =
 
 type TGuide = { slug: string; title: string; blocks: TBlock[] }
 
-const preset = (slug: string) => () => PRESETS.find((p) => p.slug === slug)!.make()
+const preset = (slug: string) => () => PRESETS.find((candidate) => candidate.slug === slug)!.make()
 
 const IN_HELP = 'De onde vem a imagem de entrada. "Resultado anterior" é o padrão; SourceGraphic é o elemento original; SourceAlpha é só a silhueta (alpha) dele; ou escolha o resultado de uma etapa anterior.'
 const IN2_HELP = 'Segunda entrada, usada para combinar com `in`. Aqui não existe "resultado anterior" implícito útil: escolha explicitamente o que combinar.'

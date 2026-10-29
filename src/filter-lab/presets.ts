@@ -2,10 +2,10 @@ import { defaultParams, getPrimitive } from './primitives'
 import type { TFilterDoc, TFilterNode, TFilterSettings, TLayerSettings, TParams } from './types'
 import type { TPreviewSource } from './serialize'
 
-let seq = 0
+let sequence = 0
 
 /** Id único para nós criados no Lab (os exemplos usam ids explícitos como `noise`). */
-const newId = () => `n${++seq}`
+const newId = () => `n${++sequence}`
 
 const DEFAULT_SETTINGS: TFilterSettings = {
   id: 'my-filter',
@@ -50,9 +50,9 @@ const CHANNEL_MATRIX = {
 
 /** Aberração cromática: desloca o fundo uma vez por canal (escalas diferentes), isola cada canal e soma com `screen`. Termina no resultado `refracted`. */
 function chromaticDisplacement(map: string, [r, g, b]: [number, number, number]) {
-  const channel = (ch: 'R' | 'G' | 'B', scale: number) => [
-    node('feDisplacementMap', { in: 'SourceGraphic', in2: map, scale }, `displaced${ch}`),
-    node('feColorMatrix', { in: `displaced${ch}`, type: 'matrix', matrix: CHANNEL_MATRIX[ch] }, `only${ch}`),
+  const channel = (channel: 'R' | 'G' | 'B', scale: number) => [
+    node('feDisplacementMap', { in: 'SourceGraphic', in2: map, scale }, `displaced${channel}`),
+    node('feColorMatrix', { in: `displaced${channel}`, type: 'matrix', matrix: CHANNEL_MATRIX[channel] }, `only${channel}`),
   ]
   return [
     ...channel('R', r),

@@ -1,0 +1,97 @@
+/*
+ * Neon / cyberpunk: fundo quase preto fixo (independe do modo claro/escuro), contornos finos
+ * luminosos na cor primária e brilho nos textos.
+ */
+[data-style='neon'] {
+	--on-surface: #e8f2ff;
+	--on-muted: #8fa3c8;
+	--surface-1: #080b1c;
+	--surface-2: #0d1230;
+	--surface-3: #141a40;
+	--outline-soft: #26305f;
+	--wp-base: #04050f;
+
+	--s-bg: rgb(7 10 28 / 0.7);
+	--s-border: 1px solid color-mix(in srgb, var(--primary-bright) 75%, transparent);
+	--s-shadow:
+		0 0 1.4em color-mix(in srgb, var(--primary-bright) 38%, transparent),
+		inset 0 0 1.4em color-mix(in srgb, var(--primary-bright) 12%, transparent);
+	--s-filter: blur(10px) saturate(1.4);
+
+	--card-bg: #0b1030;
+	--card-border: 1px solid color-mix(in srgb, var(--primary-bright) 45%, transparent);
+	--card-shadow: 0 0 0.9em color-mix(in srgb, var(--primary-bright) 22%, transparent);
+	--card-focus-shadow:
+		0 0 0 0.12em var(--primary-bright), 0 0 1.6em var(--primary-bright),
+		0 0 4em color-mix(in srgb, var(--primary-bright) 55%, transparent);
+	--card-focus-transform: scale(1.07);
+	--card-focus-border: 1px solid var(--primary-bright);
+
+	--chip-bg: transparent;
+	--chip-border: 1px solid color-mix(in srgb, var(--primary-bright) 65%, transparent);
+	--btn-bg: transparent;
+	--btn-fg: var(--primary-bright);
+	--btn-border: 1px solid var(--primary-bright);
+	--btn-shadow:
+		0 0 0.9em color-mix(in srgb, var(--primary-bright) 45%, transparent),
+		inset 0 0 0.7em color-mix(in srgb, var(--primary-bright) 22%, transparent);
+	--btn-primary-bg: var(--primary-bright);
+	--btn-primary-fg: #04050f;
+	--focus-color: var(--secondary-bright);
+	--nav-active-bg: color-mix(in srgb, var(--primary-bright) 16%, transparent);
+	--title-case: uppercase;
+	--title-tracking: 0.06em;
+}
+
+[data-style='neon'] .wp-mesh {
+	opacity: 0.35;
+}
+[data-style='neon'] .wp-orb {
+	opacity: 0.55;
+}
+[data-style='neon'] .wp-grid {
+	display: block;
+	background-image:
+		linear-gradient(
+			color-mix(in srgb, var(--primary-bright) 35%, transparent) 1px,
+			transparent 1px
+		),
+		linear-gradient(
+			90deg,
+			color-mix(in srgb, var(--primary-bright) 35%, transparent) 1px,
+			transparent 1px
+		);
+	background-size: 5em 5em;
+	opacity: 0.35;
+	-webkit-mask: radial-gradient(ellipse at 50% 100%, #000, transparent 75%);
+	mask: radial-gradient(ellipse at 50% 100%, #000, transparent 75%);
+}
+[data-style='neon'] h1,
+[data-style='neon'] h2,
+[data-style='neon'] .topbar__clock strong {
+	text-shadow: 0 0 0.5em color-mix(in srgb, var(--primary-bright) 80%, transparent);
+}
+[data-style='neon'] .chip[data-on='true'],
+[data-style='neon'] .seg button[data-on='true'],
+[data-style='neon'] .pill--accent {
+	background: var(--primary-bright);
+	color: #04050f;
+	box-shadow: 0 0 1em var(--primary-bright);
+}
+[data-style='neon'] .nav-item[data-focused='true'] {
+	background: color-mix(in srgb, var(--primary-bright) 22%, transparent);
+	color: var(--primary-bright);
+	box-shadow:
+		0 0 0 1px var(--primary-bright),
+		0 0 1.4em var(--primary-bright);
+}
+[data-style='neon'] .bar > i {
+	box-shadow: 0 0 0.6em var(--primary-bright);
+}
+[data-style='neon'] .slider input[type='range'] {
+	background: linear-gradient(to right, var(--primary-bright) var(--fill), #1b2250 var(--fill));
+}
+[data-style='neon'] .swatch[data-on='true'] {
+	border-color: #fff;
+	box-shadow: 0 0 1em currentColor;
+}
