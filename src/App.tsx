@@ -1,8 +1,11 @@
+import { themeProvider } from "./theme/service";
+
+themeProvider();
+
 function App() {
-  return (
-    <>
-    </>
-  )
+  return (<>
+
+  </>)
 }
 
 export default App
