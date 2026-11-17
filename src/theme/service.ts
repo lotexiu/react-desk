@@ -1,24 +1,12 @@
-import { PALETTES_TYPES, Theme, ThemeStyle } from '@lotexiu/typescript'
+import { Theme } from '@lotexiu/typescript';
+import type { TDeskStyle } from './contract';
+import { PlasmaStyle } from './plasma/style';
 
-const template = new ThemeStyle({
-	name: 'Neutral',
-	palettes: { primary: PALETTES_TYPES.Basic.NEUTRAL },
-	roles: {
-		background: { palette: 'primary', tone: { dark: 12, light: 90 } },
-		foreground: { palette: 'primary', tone: { dark: 90, light: 12 }, on: 'background', min: 4.5 },
-	},
-	components: {},
-})
-
-export const theme = new Theme({
-	style: template,
+export const theme = new Theme<TDeskStyle>({
+	style: PlasmaStyle,
 	mode: 'dark',
 })
 
-/**
- * Liga o tema ao documento: cada role vira uma variável CSS em `:root` (`--background`, `--foreground`, ...)
- * e `color-scheme` acompanha o modo. Reaplica a cada mudança. Retorna a função que cancela a ligação.
- */
 export function bindThemeToDocument() {
 	const root = document.documentElement
 	const apply = () => {

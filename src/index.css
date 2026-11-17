@@ -1,15 +1,16 @@
 body {
   margin: 0;
   #root {
-    background: linear-gradient(45deg, var(--background), var(--foreground));
-    color: var(--foreground);
     height: 100vh;
-    display: flex;
-    flex-direction: column;
+    overflow: hidden;
   }
 }
 
+.plasma-focusable {
+  outline: none;
+}
 
-.grow {
-  flex-grow: 1;
+.plasma-focusable:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
