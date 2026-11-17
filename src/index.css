@@ -1,0 +1,15 @@
+body {
+  margin: 0;
+  #root {
+    background: linear-gradient(45deg, var(--background), var(--foreground));
+    color: var(--foreground);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+
+.grow {
+  flex-grow: 1;
+}
