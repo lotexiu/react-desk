@@ -1,17 +1,13 @@
 import { useRef } from 'react'
 import type { PointerEvent } from 'react'
 import { usePart, useReactive } from '@lotexiu/react'
+import { PointerUtils } from '@lotexiu/dom'
 import type { Slider as HeadlessSlider } from '@lotexiu/typescript'
 import type { TControlProps } from '../../contract'
 import { usePlasmaTokens } from '../use-plasma-tokens'
 
 const THUMB_SIZE = 16
 const TRACK_THICKNESS = 4
-
-function pointerOffset(event: PointerEvent<HTMLElement>) {
-	const bounds = event.currentTarget.getBoundingClientRect()
-	return [event.clientX - bounds.left, bounds.width] as const
-}
 
 function Slider({ control, label }: TControlProps<HeadlessSlider>) {
 	const { control: tokens, motion } = usePlasmaTokens()
@@ -26,7 +22,7 @@ function Slider({ control, label }: TControlProps<HeadlessSlider>) {
 
 	const startDrag = (event: PointerEvent<HTMLDivElement>) => {
 		event.currentTarget.setPointerCapture(event.pointerId)
-		control.pointerDown(...pointerOffset(event))
+		control.pointerDown(...PointerUtils.offset(event, event.currentTarget))
 		thumbElement.current?.focus()
 	}
 
@@ -34,7 +30,7 @@ function Slider({ control, label }: TControlProps<HeadlessSlider>) {
 		<span {...root} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
 			<div
 				onPointerDown={startDrag}
-				onPointerMove={(event) => control.pointerMove(...pointerOffset(event))}
+				onPointerMove={(event) => control.pointerMove(...PointerUtils.offset(event, event.currentTarget))}
 				onPointerUp={control.pointerUp}
 				onPointerCancel={control.pointerUp}
 				style={{ position: 'relative', flexGrow: 1, height: THUMB_SIZE + 4, touchAction: 'none', cursor: 'pointer' }}

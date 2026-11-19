@@ -14,7 +14,8 @@
     "react-dom": "^19.2.8",
     "@lotexiu/br": "workspace:*",
     "@lotexiu/react": "workspace:*",
-    "@lotexiu/typescript": "workspace:*"
+    "@lotexiu/typescript": "workspace:*",
+    "@lotexiu/dom": "workspace:*"
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
